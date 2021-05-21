@@ -8,5 +8,5 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
 
-add_executable(Main main.cpp AuthCC.h)
+add_executable(Main src/main.cpp include/AuthCC.h)
 target_link_libraries(Main ${CONAN_LIBS})
