@@ -9,10 +9,11 @@
 </p>
 
 
-## DISCLAIMER
+## Example
 
-Don't skid my code and sell it in your products...
-
+```cpp
+code
+```
 
 ## Features
  
