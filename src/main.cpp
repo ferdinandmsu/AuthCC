@@ -1,4 +1,4 @@
-#include "AuthCC.h"
+#include "../include/AuthCC.h"
 
 int main() {
     auth::Client client("AID",
