@@ -1,7 +1,0 @@
-[requires]
-cpp-httplib/0.8.8
-openssl/1.1.1k
-nlohmann_json/3.9.1
-
-[generators]
-cmake
