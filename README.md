@@ -34,7 +34,8 @@ if (client.init()) {
  
 Features:
 * It is fast
-* It is easy to use
+* Header only
+* Easy to use
 
 
 
