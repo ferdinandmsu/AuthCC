@@ -1,10 +1,10 @@
 
 <br />
 <p align="center">
-  <h3 align="center">FireySniper</h3>
+  <h3 align="center">AuthCC</h3>
 
   <p align="center">
-    The fastest nitro sniper in the world
+    Header only AuthGG api wrapper
     <br />
 </p>
 
