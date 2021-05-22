@@ -26,6 +26,7 @@ if (client.init()) {
     }
 
     std::cout << "SUCCESSFULLY LOGGEDIN!";
+    std::cout << client.getUser() << std::endl;
 
 } else {
     std::cout << "Init failed" << std::endl;
@@ -62,9 +63,11 @@ if (client.init()) {
 ## Features
  
 Features:
-* It is fast
-* Header only
-* Easy to use
+* Login
+* Register
+* Reset password
+* Forgot password
+* Extend subscription
 
 
 
@@ -72,7 +75,7 @@ Features:
 
 Here are the things it's made with
 * [C++](http://cppreference.com)
-
+* [AuthGG](https://auth.gg)
 
 
 

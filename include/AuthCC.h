@@ -98,6 +98,7 @@ namespace auth {
         TIME_EXPIRED,
         NOT_INITIALIZED,
         NOT_LOGGEDIN,
+        REQUEST_FAILED,
         UNKNOWN
     };
 
@@ -194,6 +195,8 @@ namespace auth {
             return "Email is used";
         else if (error == Error::INVALID_USERNAME)
             return "Invalid username";
+        else if (error == Error::REQUEST_FAILED)
+            return "Request failed";
         else
             return "Something went wrong while resolving the error";
     }
@@ -206,7 +209,7 @@ namespace auth {
                   hostname(details::hostname()), hwid(details::getHardwareID()),
                   is_initialized(false), is_loggedin(false) {}
 
-        bool init() {
+        bool init() noexcept {
             try {
                 auto json = request("info");
                 if (!json["result"].is_null() && json["result"].get<std::string>() == "failed")
@@ -220,27 +223,22 @@ namespace auth {
             }
         }
 
-        Error userLogin(const std::string &username, const std::string &password) {
+        Error userLogin(const std::string &username, const std::string &password) noexcept {
             if (!is_initialized) return Error::NOT_INITIALIZED;
 
             try {
                 auto json = request("login", {{"username", username},
                                               {"password", password}});
-                if (json["result"].get<std::string>() == "invalid_details")
-                    return Error::INVALID_DETAILS;
-                else if (json["result"].get<std::string>() == "invalid_hwid")
-                    return Error::INVALID_HWID;
-                else if (json["result"].get<std::string>() == "hwid_updated")
-                    return Error::HWID_UPDATED;
-                else if (json["result"].get<std::string>() == "time_expired")
-                    return Error::TIME_EXPIRED;
-                else if (json["result"].get<std::string>() != "success")
-                    return Error::UNKNOWN;
+                auto err = errorCheck(json["result"]);
+                if (err != Error::SUCCESS)
+                    return err;
 
                 parseUser(json);
-                return Error::SUCCESS;
+                return err;
 
             } catch (std::runtime_error &) {
+                return Error::REQUEST_FAILED;
+            } catch (...) {
                 return Error::UNKNOWN;
             }
         }
@@ -248,7 +246,7 @@ namespace auth {
         Error userRegister(const std::string &username,
                            const std::string &email,
                            const std::string &password,
-                           const std::string &license) {
+                           const std::string &license) noexcept {
             if (!is_initialized) return Error::NOT_INITIALIZED;
 
             try {
@@ -258,22 +256,66 @@ namespace auth {
                                      {"email",    email},
                                      {"license",  license}});
 
-                if (json["result"].get<std::string>() == "invalid_license")
-                    return Error::INVALID_LICENSE;
-                else if (json["result"].get<std::string>() == "email_used")
-                    return Error::EMAIL_USED;
-                else if (json["result"].get<std::string>() == "invalid_username")
-                    return Error::INVALID_USERNAME;
-                else if (json["result"].get<std::string>() != "success")
-                    return Error::UNKNOWN;
-
-                return Error::SUCCESS;
+                return errorCheck(json["result"]);
+            } catch (std::runtime_error &) {
+                return Error::REQUEST_FAILED;
             } catch (...) {
                 return Error::UNKNOWN;
             }
         }
 
-        Error log(const std::string &msg) {
+        Error extendSubscription(const std::string &username,
+                                 const std::string &password,
+                                 const std::string &license) noexcept {
+            if (!is_initialized) return Error::NOT_INITIALIZED;
+
+            try {
+                auto json = request("extend",
+                                    {{"username", username},
+                                     {"password", password},
+                                     {"license",  license}});
+
+                return errorCheck(json["result"]);
+            } catch (std::runtime_error &) {
+                return Error::REQUEST_FAILED;
+            } catch (...) {
+                return Error::UNKNOWN;
+            }
+        }
+
+        Error forgotPassword(const std::string &username) noexcept {
+            if (!is_initialized) return Error::NOT_INITIALIZED;
+
+            try {
+                auto json = request("forgotpw",
+                                    {{"username", username}});
+                return errorCheck(json["result"]);
+            } catch (std::runtime_error &) {
+                return Error::REQUEST_FAILED;
+            } catch (...) {
+                return Error::UNKNOWN;
+            }
+        }
+
+        Error changePassword(const std::string &username,
+                             const std::string &password,
+                             const std::string &new_password) noexcept {
+            if (!is_initialized) return Error::NOT_INITIALIZED;
+
+            try {
+                auto json = request("changepw",
+                                    {{"username", username},
+                                     {"password", password},
+                                     {"newpassword", new_password}});
+                return errorCheck(json["result"]);
+            } catch (std::runtime_error &) {
+                return Error::REQUEST_FAILED;
+            } catch (...) {
+                return Error::UNKNOWN;
+            }
+        }
+
+        Error log(const std::string &msg) noexcept {
             if (!is_initialized) return Error::NOT_INITIALIZED;
             if (!is_loggedin) return Error::NOT_LOGGEDIN;
 
@@ -287,6 +329,8 @@ namespace auth {
                     return Error::UNKNOWN;
 
                 return Error::SUCCESS;
+            } catch (std::runtime_error &) {
+                return Error::REQUEST_FAILED;
             } catch (...) {
                 return Error::UNKNOWN;
             }
@@ -336,6 +380,27 @@ namespace auth {
 
             variables = raw["variables"].get<std::map<std::string, std::string>>();
             is_loggedin = true;
+        }
+
+        Error errorCheck(const std::string &error) {
+            if (error == "invalid_details")
+                return Error::INVALID_DETAILS;
+            else if (error == "invalid_hwid")
+                return Error::INVALID_HWID;
+            else if (error == "hwid_updated")
+                return Error::HWID_UPDATED;
+            else if (error == "time_expired")
+                return Error::TIME_EXPIRED;
+            else if (error == "invalid_license")
+                return Error::INVALID_LICENSE;
+            else if (error == "email_used")
+                return Error::EMAIL_USED;
+            else if (error == "invalid_username")
+                return Error::INVALID_USERNAME;
+            else if (error != "success")
+                return Error::UNKNOWN;
+
+            return Error::SUCCESS;
         }
 
     private:
