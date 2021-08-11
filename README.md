@@ -1,7 +1,7 @@
 
 <br />
 <p align="center">
-  <h3 align="center">AuthCC</h3>
+  <h1 align="center">AuthCC</h1>
 
   <p align="center">
     Header only AuthGG api wrapper
