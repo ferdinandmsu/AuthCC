@@ -8,7 +8,7 @@
     <br />
 </p>
 
-## Build Example
+## Build the Visual Studio example
 1. Download the repo and open a terminal (cmd)
 2. Cd into the repository
 3. > cd ExampleAuthCC
