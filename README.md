@@ -7,6 +7,7 @@
     Header only AuthGG api wrapper
     <br />
 </p>
+<br />
 
 ## Build the Visual Studio example
 1. Download the repo and open a terminal (cmd)
