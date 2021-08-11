@@ -8,6 +8,14 @@
     <br />
 </p>
 
+## Build Example
+1. Download the repo and open a terminal (cmd)
+2. cd into the repository
+3. cd ExampleAuthCC
+4. git clone https://github.com/ferdinandlb/opensslbin
+5. Open the solution file with visual studio
+6. Click on Local Windows debugger
+
 
 ## Example
 
