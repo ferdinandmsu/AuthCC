@@ -13,7 +13,7 @@
 #define CPPHTTPLIB_OPENSSL_SUPPORT
 
 #include "httplib.h"
-#include "nlohmann/json.hpp"
+#include "json.hpp"
 
 #ifdef _WIN32
 #define OS_WINDOWS
