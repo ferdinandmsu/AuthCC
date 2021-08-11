@@ -10,11 +10,15 @@
 #include <chrono>
 #include <future>
 
+#define CPPHTTPLIB_OPENSSL_SUPPORT
+
 #include "httplib.h"
 #include "json.hpp"
 
 #ifdef _WIN32
 #define OS_WINDOWS
+#include <winsock2.h>
+#include <windows.h>
 #elif _WIN64
 #define OS_WINDOWS
 #else
@@ -416,7 +420,7 @@ namespace auth {
     private:
         nlohmann::json request(const std::string& type,
             const std::map<std::string, std::string>& attributes = {}) {
-            httplib::Client client{ "https://api.auth.gg" };
+            httplib::SSLClient client{ "api.auth.gg" };
             std::string data =
                 "type=" + type + "&aid=" + aid + "&apikey=" + apikey + "&secret=" + secret + "&hwid=" + hwid;
 
